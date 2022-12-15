@@ -122,7 +122,7 @@ class Recipe:
             result[k] = v.value
             metadata[k] = {
                 "from_field": v.original_name,
-                "from_field_type": v.original_type,
+                "from_field_type": v.original_type.name if v.original_type else None,
                 "type": v.actual_type.name
             }
         return result, metadata, state

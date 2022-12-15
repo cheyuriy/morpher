@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 readme = Path("README.md").read_text(encoding="utf-8")
 version = Path("morpher/_version.py").read_text(encoding="utf-8")
@@ -17,7 +17,7 @@ setup(
     author="cheyuriy",
     author_email="crsmithdev@gmail.com",
     license="Apache 2.0",
-    packages=["morpher"],
+    packages=find_packages(),
     zip_safe=False,
     python_requires=">=3.6",
     install_requires=[

@@ -1,7 +1,7 @@
 from typing import List
 COMMENTS_STARTER = "--"
 CONTINUE_SYMBOL = "\t"
-PARTS_SPLITTER = "."
+PARTS_SPLITTER = " . "
 TOKENS_SPLITTER = " "
 
 PARTS_SPLITTER_TOKEN = "DOT"

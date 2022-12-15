@@ -15,7 +15,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/cheyuriy/morpher",
     author="cheyuriy",
-    author_email="crsmithdev@gmail.com",
+    author_email="cheyuriydev@gmail.com",
     license="Apache 2.0",
     packages=find_packages(),
     zip_safe=False,

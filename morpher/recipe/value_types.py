@@ -46,9 +46,10 @@ class FinalType(ValueType):
 
     def _to_timestamp(self, value: Any) -> tuple[str, Optional[Exception]]:
         try:
-            if not isinstance(value, str):
+            if isinstance(value, str) or isinstance(value, int):
+                return arrow.get(value).to("UTC").isoformat()[:-6], None
+            else:
                 raise ValueError
-            return arrow.get(value).to("UTC").isoformat()[:-6], None
         except Exception as e:
             return None, e
 

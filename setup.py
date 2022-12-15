@@ -21,7 +21,8 @@ setup(
     zip_safe=False,
     python_requires=">=3.6",
     install_requires=[
-        "jsonpath-ng"
+        "jsonpath-ng",
+        "arrow"
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",

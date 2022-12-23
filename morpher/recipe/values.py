@@ -22,6 +22,7 @@ class Value:
 
     @classmethod
     def create_value_from_previous(cls, value, s: Any):
+        print(s)
         if isinstance(s, int):
             new_value = ScalarValue.inherit(value, new_type=TempType.INTEGER, new_value=s)
         elif isinstance(s, float):
@@ -34,6 +35,8 @@ class Value:
             new_value = ListValue.inherit(value, new_type=TempType.LIST, new_value=s)
         elif isinstance(s, dict):
             new_value = ObjectValue.inherit(value, new_type=TempType.OBJECT, new_value=s)
+        elif s is None:
+            new_value = NullValue.inherit(value)
         else:
             raise ValueError
 

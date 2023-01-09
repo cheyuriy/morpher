@@ -142,11 +142,9 @@ class FinalType(ValueType):
             return v 
         else:
             if is_safe and with_default:
-                print(e)
                 default = default_value if default_value else default_values[self.name]
                 return default
             elif is_safe and not with_default:
-                print(e)
                 return None 
             else: 
                 raise e 

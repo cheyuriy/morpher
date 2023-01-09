@@ -22,7 +22,6 @@ class Value:
 
     @classmethod
     def create_value_from_previous(cls, value, s: Any):
-        print(s)
         if isinstance(s, int):
             new_value = ScalarValue.inherit(value, new_type=TempType.INTEGER, new_value=s)
         elif isinstance(s, float):

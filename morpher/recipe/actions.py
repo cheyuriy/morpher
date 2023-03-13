@@ -44,9 +44,9 @@ class Take(Action):
             if len(input.temp_fields):
                 for k,v in input.temp_fields.items():
                     name_wo_delimiter = k.split("$")[0]
-                    if self.name == k.split("$")[0]:
+                    if self.name == name_wo_delimiter:
                         input.value = v 
-                        input.value.actual_name = name_wo_delimiter
+                        input.value.actual_name = self.name
                         return input
             input.value = AbsentValue(original_name=self.name)
 
@@ -291,8 +291,10 @@ class Alias(Action):
         if self.name:
             input.value.actual_name = self.name
             #input.temp_fields[input.value.actual_name] = copy(input.value)
-        else:
+        elif input.value.actual_name is None:
             input.value.actual_name = input.value.original_name
+        else:
+            pass
 
         input.temp_fields[input.value.actual_name] = copy(input.value) 
 

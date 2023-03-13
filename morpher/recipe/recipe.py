@@ -121,7 +121,6 @@ class Recipe:
                 continue
             result[k] = v.value
             metadata[k] = {
-                "from_field": v.original_name,
                 "type": v.actual_type.name
             }
         return result, metadata, state

@@ -6,6 +6,9 @@ from .values import Value, AbsentValue, NullValue, ObjectValue, ListValue, Scala
 from .value_types import FinalType
 from .functions import registered_functions
 
+#All actions and corresponding transformations are there
+#Every action "runs" by applying different transformations to the passed state
+
 str_to_final_type = {
     "string": FinalType.STRING,
     "integer": FinalType.INTEGER,
@@ -20,6 +23,9 @@ str_to_final_type = {
 }
 
 class Action(ABC):
+    """Base class for Actiona. 
+    Every action can be run through the usage of `run` method, which should receive some state and return updated state.
+    """
     @abstractmethod
     def run(self, input: MorphState) -> MorphState:
         input.value = input.source_fields 
@@ -73,6 +79,8 @@ class Partial(Action):
         self.fields_to_keep = args 
 
     def run(self, input: MorphState) -> MorphState:
+        if isinstance(input.value, AbsentValue):
+            return input
         if isinstance(input.value, NullValue):
             return input
         if not isinstance(input.value, ObjectValue):
@@ -88,6 +96,8 @@ class First(Action):
 
     def run(self, input: MorphState) -> MorphState:
         #TODO: move NullValue processing as a decorator
+        if isinstance(input.value, AbsentValue):
+            return input
         if isinstance(input.value, NullValue):
             return input
         if not isinstance(input.value, ListValue):
@@ -107,6 +117,8 @@ class Last(Action):
         super().__init__()
 
     def run(self, input: MorphState) -> MorphState:
+        if isinstance(input.value, AbsentValue):
+            return input
         if isinstance(input.value, NullValue):
             return input
         if not isinstance(input.value, ListValue):
@@ -127,6 +139,8 @@ class Nth(Action):
         self.index = int(args[0])
 
     def run(self, input: MorphState) -> MorphState:
+        if isinstance(input.value, AbsentValue):
+            return input
         if isinstance(input.value, NullValue):
             return input
         if not isinstance(input.value, ListValue):
@@ -154,6 +168,8 @@ class Extract(Action):
         self.path = jsonpath_ng.parse(args[0])
 
     def run(self, input: MorphState) -> MorphState:
+        if isinstance(input.value, AbsentValue):
+            return input
         if isinstance(input.value, NullValue):
             return input
         if not isinstance(input.value, ObjectValue):
@@ -178,6 +194,8 @@ class Flatten(Action):
         super().__init__()
 
     def run(self, input: MorphState) -> MorphState:
+        if isinstance(input.value, AbsentValue):
+            return input
         if isinstance(input.value, NullValue):
             return input
         if not isinstance(input.value, ObjectValue):
@@ -202,6 +220,8 @@ class Apply(Action):
             raise ValueError
 
     def run(self, input: MorphState) -> MorphState:
+        if isinstance(input.value, AbsentValue):
+            return input
         results = self.f(input.value.value)
         if isinstance(results, list):
             list_of_values = []
@@ -230,6 +250,8 @@ class Lower(Action):
         super().__init__()
 
     def run(self, input: MorphState) -> MorphState:
+        if isinstance(input.value, AbsentValue):
+            return input
         if not isinstance(input.value, ScalarValue):
             return input
         
@@ -245,6 +267,8 @@ class Upper(Action):
         super().__init__()
 
     def run(self, input: MorphState) -> MorphState:
+        if isinstance(input.value, AbsentValue):
+            return input
         if not isinstance(input.value, ScalarValue):
             return input
         
@@ -266,7 +290,11 @@ class Alias(Action):
     def run(self, input: MorphState) -> MorphState:
         if self.name:
             input.value.actual_name = self.name
-            input.temp_fields[input.value.actual_name] = copy(input.value)
+            #input.temp_fields[input.value.actual_name] = copy(input.value)
+        else:
+            input.value.actual_name = input.value.original_name
+
+        input.temp_fields[input.value.actual_name] = copy(input.value) 
 
         return input
 
@@ -277,7 +305,11 @@ class Prefix(Action):
         self.prefix = args[0]
 
     def run(self, input: MorphState) -> MorphState:
-        input.value.actual_name = self.prefix + input.value.actual_name
+        if input.value.actual_name: 
+            input.value.actual_name = self.prefix + input.value.actual_name
+        else:
+            input.value.actual_name = self.prefix + input.value.original_name
+
         input.temp_fields[input.value.actual_name] = copy(input.value)
 
         return input
@@ -289,7 +321,11 @@ class Suffix(Action):
         self.suffix = args[0]
 
     def run(self, input: MorphState) -> MorphState:
-        input.value.actual_name = input.value.actual_name + self.suffix
+        if input.value.actual_name: 
+            input.value.actual_name = input.value.actual_name + self.suffix
+        else:
+            input.value.actual_name = input.value.original_name + self.suffix
+
         input.temp_fields[input.value.actual_name] = copy(input.value)
 
         return input
@@ -299,6 +335,8 @@ class Split(Action):
         super().__init__()
 
     def run(self, input: MorphState) -> MorphState:
+        if isinstance(input.value, AbsentValue):
+            return input
         if isinstance(input.value, NullValue):
             return input
         if not isinstance(input.value, ListValue):

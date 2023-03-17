@@ -63,3 +63,27 @@ def create_morph(
         )
 
     return f
+
+def create_recipe(
+    recipe: Recipe = None, 
+    recipe_str: str = None, 
+    recipe_path: str = None, 
+    source_fields_stategy: SourceFieldStrategy = SourceFieldStrategy.AUTO_DROP, 
+    with_source_fields_timestamp_cast: bool = False
+):
+    _recipe = None 
+    _recipe_str = recipe_str
+    if recipe:
+        _recipe = recipe
+    elif recipe_path:
+        with open(recipe_path) as f:
+            _recipe_str = f.read()
+
+    if _recipe_str:
+        tokens = Lexer().tokenize(_recipe_str)
+        instructions = Parser().parse(tokens)
+        _recipe = Recipe(
+            source_fields_stategy=source_fields_stategy, 
+            with_source_fields_timestamp_cast=with_source_fields_timestamp_cast
+        ).translate(instructions)
+    return _recipe
